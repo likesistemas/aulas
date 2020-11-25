@@ -42,15 +42,4 @@ $app->get('/divisao/{numero1}[/{numero2}]', function (Request $request, Response
         ->withHeader('Content-Type', 'application/json');;
 });
 
-$app->get('/produtos/', function (Request $request, Response $response, array $args) {
-    
-    
-    $response->getBody()->write(json_encode(['resultado'=>Soma::fazConta(
-        $args['numero1'], 
-        $args['numero2']
-    )]));
-    return $response
-        ->withHeader('Content-Type', 'application/json');
-});
-
 $app->run();
