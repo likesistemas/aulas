@@ -12,6 +12,7 @@ class ApiTest extends TestCase {
         $response = $client->request('GET', 'produto/1');
         $resultado = json_decode($response->getBody()->getContents(), true);
         $this->assertTrue(is_array($resultado));
+        $this->assertEqualsCanonicalizing(['id', 'nome','valor','temPromocao','valorPromocao'], array_keys($resultado));
         $this->assertEquals("Coca-cola", $resultado['nome']);
         $this->assertEquals("5", $resultado['valor']);
         $this->assertFalse($resultado['temPromocao']);
@@ -29,6 +30,7 @@ class ApiTest extends TestCase {
         ]);
         $resultado = json_decode($response->getBody()->getContents(), true);
         $this->assertTrue(is_array($resultado));
+        $this->assertEqualsCanonicalizing(['id', 'nome','valor','temPromocao','valorPromocao'], array_keys($resultado));
         $this->assertEquals("Coca-cola", $resultado['nome']);
         $this->assertEquals("5", $resultado['valor']);
         $this->assertFalse($resultado['temPromocao']);
@@ -46,6 +48,7 @@ class ApiTest extends TestCase {
         ]);
         $resultado = json_decode($response->getBody()->getContents(), true);
         $this->assertTrue(is_array($resultado));
+        $this->assertEqualsCanonicalizing(['id', 'nome','valor','temPromocao','valorPromocao'], array_keys($resultado));
         $this->assertEquals("Coca-cola", $resultado['nome']);
         $this->assertEquals("5", $resultado['valor']);
         $this->assertTrue($resultado['temPromocao']);
