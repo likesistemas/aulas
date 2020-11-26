@@ -26,6 +26,8 @@ services:
 
     php:
         image: likesistemas/php-dev:latest
+        environment:
+            - XDEBUG=true
         volumes:
             - ./www/:/var/www/
         networks:
