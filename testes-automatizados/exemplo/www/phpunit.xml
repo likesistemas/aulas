@@ -1,8 +1,20 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="vendor/autoload.php">
-    <testsuites>
-        <testsuite name="exemplo">
-            <directory>./tests/</directory>
-        </testsuite>
-    </testsuites>
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./src/</directory>
+    </include>
+    <report>
+      <clover outputFile="./tests/phpunit.coverage.xml"/>
+      <html outputDirectory="./tests/_reports/coverage" />
+    </report>
+  </coverage>
+  <testsuites>
+    <testsuite name="exemplo">
+      <directory>./tests/</directory>
+    </testsuite>
+  </testsuites>
+  <logging>
+    <junit outputFile="./tests/phpunit.report.xml"/>
+  </logging>
 </phpunit>
