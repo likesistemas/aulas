@@ -12,7 +12,10 @@
     "autoload": {
         "psr-4": {
             "Like\\Exemplo\\": "./src/"
-        }
+        },
+        "files": [
+            "./src/conexao.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

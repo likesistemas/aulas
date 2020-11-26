@@ -3,12 +3,8 @@
 namespace Like\Exemplo\Produto;
 
 use LogicException;
-use PDO;
 
 class Produto {
-
-    /** @var PDO */
-    private $conn;
 
     /** @var int */
     private $id;
@@ -22,32 +18,15 @@ class Produto {
     /** @var float */
     private $percDesconto;
 
-    public function __construct(int $id) {
-        $this->conn = self::conectarNoBd('mysql', 'root', 'root', 'meu-db');
-        $sql = "SELECT id, nome, valor, percDesconto FROM produto WHERE id = ?";
-        $row = $this->row($sql, [$id]);
+    public function __construct(string $nome, float $valor, float $percDesconto) {
+        $this->id = null;
+        $this->nome = $nome;
+        $this->valor = $valor;
+        $this->percDesconto = $percDesconto;
+    }
 
-        if($row === null) {
-            throw new LogicException("Produto #{$id} não existe.");
-        }
-
+    private function setId(int $id) {
         $this->id = $id;
-        $this->nome = $row['nome'];
-        $this->valor = $row['valor'];
-        $this->percDesconto = $row['percDesconto'];
-    }
-
-    public static function conectarNoBd(string $host, string $user, string $password, string $name) {
-        return new PDO("mysql:host={$host};dbname={$name}", $user, $password);
-    }
-
-    private function row(string $sql, array $params) {
-        $stmt = $this->conn->prepare($sql);
-        if( !$stmt->execute($params) ) {
-            return null;
-        }
-
-        return $stmt->fetch();
     }
 
     public function getId():int {
@@ -66,6 +45,20 @@ class Produto {
         return $this->percDesconto > 0;
     }
 
+    public function toArray() {
+        return [
+            'id' => $this->getId(),
+            'nome' => $this->getNome(),
+            'valor' => $this->getValor(),
+            'temPromocao' => $this->hasPromocao(),
+            'valorPromocao' => $this->getValorPromocao()
+        ];
+    }
+
+    public function toJson() {
+        return json_encode($this->toArray());
+    }
+
     public function getValorPromocao():?float {
         if(!$this->hasPromocao()) {
             return null;
@@ -74,17 +67,35 @@ class Produto {
         return $this->valor - ($this->valor * ($this->percDesconto/100));
     }
 
-    public static function add(string $nome, float $valor, ?float $percDesconto) {
-        $conn = self::conectarNoBd('mysql', 'root', 'root', 'meu-db');
+    public static function fill(int $id) {
+        $sql = "SELECT id, nome, valor, percDesconto 
+                FROM produto 
+                WHERE id = ?";
+        $row = Conexao::row($sql, [$id]);
+
+        if(!$row) {
+            throw new LogicException("Produto #{$id} não existe.");
+        }
+
+        $produto = new Produto(
+            $row['nome'],
+            $row['valor'],
+            $row['percDesconto']
+        );
+        $produto->setId($row['id']);
+        return $produto;
+    }
+
+    public function add() {
         $sql = "INSERT INTO `produto` (nome, valor, percDesconto) VALUES (:nome,:valor,:percDesconto);";
-        $stmt = $conn->prepare($sql);
+        $stmt = Conexao::prepare($sql);
         $stmt->execute([
-            'nome' => $nome,
-            'valor' => $valor,
-            'percDesconto' => $percDesconto ?? 0
+            'nome' => $this->nome,
+            'valor' => $this->valor,
+            'percDesconto' => $this->percDesconto ?? 0
         ]);
-        $id = $conn->lastInsertId();
-        return new Produto($id);
+        $this->id = Conexao::lastInsertId();
+        return $this;
     } 
 
 }

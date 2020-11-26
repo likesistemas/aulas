@@ -45,31 +45,21 @@ $app->get('/divisao/{numero1}[/{numero2}]', function (Request $request, Response
 
 $app->post('/produto', function (Request $request, Response $response) {
     $json = json_decode($request->getBody()->getContents(), true);
-    $produto = Produto::add(
+    $produto = new Produto(
         $json['nome'], 
         (float) $json['valor'], 
         (float) $json['percDesconto']
     );
-    $response->getBody()->write(json_encode([
-        'id' => $produto->getId(),
-        'nome' => $produto->getNome(),
-        'valor' => $produto->getValor(),
-        'temPromocao' => $produto->hasPromocao(),
-        'valorPromocao' => $produto->getValorPromocao()
-    ]));
+    $produto->add();
+
+    $response->getBody()->write($produto->toJson());
     return $response->withStatus(201);
 });
 
 $app->get('/produto/{id}', function (Request $request, Response $response, array $args) {
     try {
-        $produto = new Produto($args['id']);
-        $response->getBody()->write(json_encode([
-            'id' => $produto->getId(),
-            'nome' => $produto->getNome(),
-            'valor' => $produto->getValor(),
-            'temPromocao' => $produto->hasPromocao(),
-            'valorPromocao' => $produto->getValorPromocao()
-        ]));
+        $produto = Produto::fill($args['id']);
+        $response->getBody()->write($produto->toJson());
     } catch(LogicException $ex) {
         $error = json_encode([
             'erro' => $ex->getMessage()
