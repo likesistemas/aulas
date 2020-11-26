@@ -9,8 +9,9 @@ class SomaTest extends TestCase {
 
     public function testSoma() {
         $this->assertEquals(2, Soma::fazConta(1,1));
-        $this->assertEquals(4, Soma::fazConta(2,2));
-        $this->assertEquals(8, Soma::fazConta(4,4));
+        $this->assertEquals(0, Soma::fazConta(2,-2));
+        $this->assertEquals(8.55, Soma::fazConta(3.333,5.22));
+        $this->assertEquals(8.56, Soma::fazConta(3.337,5.22));
     }
 
 }

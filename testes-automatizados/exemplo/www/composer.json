@@ -16,7 +16,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Like\\Exemplo\\Test\\": "./src/"
+            "Like\\Exemplo\\Tests\\": "./tests/"
         }
     },
     "require": {
