@@ -27,7 +27,7 @@ class Produto {
         $sql = "SELECT id, nome, valor, percDesconto FROM produto WHERE id = ?";
         $row = $this->row($sql, [$id]);
 
-        if(!$row) {
+        if($row === null) {
             throw new LogicException("Produto #{$id} não existe.");
         }
 
@@ -41,7 +41,7 @@ class Produto {
         return new PDO("mysql:host={$host};dbname={$name}", $user, $password);
     }
 
-    public function row(string $sql, array $params) {
+    private function row(string $sql, array $params) {
         $stmt = $this->conn->prepare($sql);
         if( !$stmt->execute($params) ) {
             return null;
@@ -74,14 +74,14 @@ class Produto {
         return $this->valor - ($this->valor * ($this->percDesconto/100));
     }
 
-    public static function add(string $nome, float $valor, float $percDesconto) {
+    public static function add(string $nome, float $valor, ?float $percDesconto) {
         $conn = self::conectarNoBd('mysql', 'root', 'root', 'meu-db');
         $sql = "INSERT INTO `produto` (nome, valor, percDesconto) VALUES (:nome,:valor,:percDesconto);";
         $stmt = $conn->prepare($sql);
         $stmt->execute([
             'nome' => $nome,
             'valor' => $valor,
-            'percDesconto' => $percDesconto
+            'percDesconto' => $percDesconto ?? 0
         ]);
         $id = $conn->lastInsertId();
         return new Produto($id);
